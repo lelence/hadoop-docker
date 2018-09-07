@@ -4,9 +4,9 @@ MAINTAINER Toan <lelence@163.com>
 
 USER root
 
-RUN yum -y install initscripts; yum clean all
+# RUN yum -y install initscripts; yum clean all
 
-RUN yum update -y; yum clean all
+# RUN yum update -y; yum clean all
 RUN	yum install -y wget tar which sudo openssh-server openssh-clients; yum clean all
 RUN	yum install -y snappy snappy-devel openssl openssl-devel; yum clean all
 
@@ -39,11 +39,13 @@ ENV PATH $JAVA_HOME/bin:$PATH
 # wget hadoop
 RUN wget http://mirrors.hust.edu.cn/apache/hadoop/common/hadoop-2.7.7/hadoop-2.7.7.tar.gz && \
 	tar -zxvf hadoop-2.7.7.tar.gz -C /usr/local/ && \
-	ln -s /usr/local/hadoop-2.7.7 /usr/local/hadoop
+	rm -rf hadoop-2.7.7.tar.gz && \
+	ln -s /usr/local/hadoop-2.7.7 /usr/local/hadoop 
 
 # load local file
 # ADD hadoop-2.7.7.tar.gz /usr/local/
-# RUN ln -s /usr/local/hadoop-2.7.7 /usr/local/hadoop
+# RUN rm -rf hadoop-2.7.7.tar.gz && \
+#	ln -s /usr/local/hadoop-2.7.7 /usr/local/hadoop
 
 ENV HADOOP_PREFIX /usr/local/hadoop
 ENV HADOOP_COMMON_HOME /usr/local/hadoop
@@ -60,10 +62,9 @@ ADD config/hdfs-site.xml $HADOOP_PREFIX/etc/hadoop/hdfs-site.xml
 ADD config/mapred-site.xml $HADOOP_PREFIX/etc/hadoop/mapred-site.xml
 ADD config/yarn-site.xml $HADOOP_PREFIX/etc/hadoop/yarn-site.xml
 
-RUN sed s/HOSTNAME/localhost/ $HADOOP_CONF_DIR/core-site.xml.template > $HADOOP_CONF_DIR/core-site.xml
+# RUN sed s/HOSTNAME/localhost/ $HADOOP_CONF_DIR/core-site.xml.template > $HADOOP_CONF_DIR/core-site.xml
 
 RUN sed -i '/^export JAVA_HOME/ s:.*:export JAVA_HOME=/usr/java/jdk1.8.0_181-amd64\nexport HADOOP_CONF_DIR=/usr/local/hadoop/etc/hadoop/:' $HADOOP_PREFIX/etc/hadoop/hadoop-env.sh
-
 
 RUN	$HADOOP_PREFIX/bin/hadoop namenode -format
 

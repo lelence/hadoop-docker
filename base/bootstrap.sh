@@ -2,9 +2,11 @@
 
 /usr/sbin/sshd -D &
 
-export JAVA_HOME=/usr/java/jdk1.8.0_181-amd64
+sed s/HOSTNAME/$HOSTNAME/ $HADOOP_CONF_DIR/core-site.xml.template > $HADOOP_CONF_DIR/core-site.xml
 
 $HADOOP_PREFIX/sbin/start-dfs.sh
 $HADOOP_PREFIX/sbin/start-yarn.sh
+
+# $HADOOP_PREFIX/sbin/mr-jobhistory-daemon.sh start historyserver
 
 /bin/bash
